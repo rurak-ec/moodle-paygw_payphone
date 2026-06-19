@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="payment/gateway/payphone/db" VERSION="20260618" COMMENT="XMLDB file for PayPhone payment gateway plugin"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="paygw_payphone" COMMENT="Stores PayPhone transactions: pending context and final result.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="clienttransactionid" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Merchant-generated unique transaction id (idempotency key)"/>
+        <FIELD NAME="payphoneid" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="PayPhone paymentId returned on Prepare"/>
+        <FIELD NAME="transactionid" TYPE="int" LENGTH="19" NOTNULL="false" SEQUENCE="false" COMMENT="PayPhone numeric transaction id from the return URL (needed to Confirm)"/>
+        <FIELD NAME="paymentid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="core_payment payments.id, set once delivered"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="paymentarea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="accountid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Payment account id"/>
+        <FIELD NAME="amount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Amount in integer cents"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" SEQUENCE="false" COMMENT="pending|approved|canceled"/>
+        <FIELD NAME="authorizationcode" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="clienttransactionid" UNIQUE="true" FIELDS="clienttransactionid"/>
+        <INDEX NAME="paymentid" UNIQUE="false" FIELDS="paymentid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
