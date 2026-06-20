@@ -35,14 +35,15 @@ use core_privacy\local\request\writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\provider, paygw_provider {
-
     /**
      * Returns metadata about this plugin's data storage.
      *
      * @param \core_privacy\local\metadata\collection $collection The initialised collection to add items to.
      * @return \core_privacy\local\metadata\collection A listing of user data stored in this plugin.
      */
-    public static function get_metadata(\core_privacy\local\metadata\collection $collection): \core_privacy\local\metadata\collection {
+    public static function get_metadata(
+        \core_privacy\local\metadata\collection $collection
+    ): \core_privacy\local\metadata\collection {
         $collection->add_database_table('paygw_payphone', [
             'userid' => 'privacy:metadata:paygw_payphone:userid',
             'payphoneid' => 'privacy:metadata:paygw_payphone:payphoneid',

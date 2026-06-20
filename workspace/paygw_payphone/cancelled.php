@@ -43,7 +43,8 @@ if (!empty($clienttxid)) {
         $DB->execute(
             "UPDATE {paygw_payphone} SET status = 'canceled', timemodified = ?
               WHERE id = ? AND status = 'pending' AND userid = ?",
-            [$now, $record->id, $USER->id]);
+            [$now, $record->id, $USER->id]
+        );
     }
 }
 
@@ -55,5 +56,9 @@ if ($component === 'enrol_fee' && $paymentarea === 'fee' && !empty($itemid)) {
     }
 }
 
-redirect($url, get_string('paymentcancelled', 'paygw_payphone'), 0,
-    \core\output\notification::NOTIFY_WARNING);
+redirect(
+    $url,
+    get_string('paymentcancelled', 'paygw_payphone'),
+    0,
+    \core\output\notification::NOTIFY_WARNING
+);

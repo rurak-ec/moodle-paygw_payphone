@@ -33,7 +33,6 @@ use core_payment\form\account_gateway;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class gateway extends \core_payment\gateway {
-
     /**
      * The currencies supported by PayPhone. PayPhone operates in Ecuador (USD).
      *
@@ -60,8 +59,12 @@ class gateway extends \core_payment\gateway {
             'responseurl' => $CFG->wwwroot . '/payment/gateway/payphone/process.php',
             'cancelurl' => $CFG->wwwroot . '/payment/gateway/payphone/cancelled.php',
         ];
-        $mform->addElement('static', 'payphone_instructions', '',
-            get_string('config_instructions', 'paygw_payphone', $a));
+        $mform->addElement(
+            'static',
+            'payphone_instructions',
+            '',
+            get_string('config_instructions', 'paygw_payphone', $a)
+        );
 
         // Make core's generic "Enable" checkbox explicit and render it as a toggle switch.
         // The 'enabled' element is added by core_payment\form\account_gateway BEFORE this hook;
@@ -71,14 +74,21 @@ class gateway extends \core_payment\gateway {
             $enabled->setLabel(get_string('enablegateway', 'paygw_payphone'));
             $enabled->updateAttributes(['role' => 'switch']);
             $mform->addHelpButton('enabled', 'enablegateway', 'paygw_payphone');
-            $mform->addElement('html', '<style>
-#id_enabled.form-check-input{width:2.6em;height:1.35em;margin-top:.15em;border-radius:2em;cursor:pointer;
-background-position:left center;background-repeat:no-repeat;transition:background-position .15s ease-in-out;
-background-image:url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'-4 -4 8 8\'%3e%3ccircle r=\'3\' fill=\'rgba(0,0,0,.25)\'/%3e%3c/svg%3e");}
-#id_enabled.form-check-input:checked{background-position:right center;
-background-image:url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'-4 -4 8 8\'%3e%3ccircle r=\'3\' fill=\'%23fff\'/%3e%3c/svg%3e");}
-#id_enabled.form-check-input + label{cursor:pointer;font-weight:600;margin-left:.4em;}
-</style>');
+            // Inline (scoped to this form render) toggle styling for the gateway "enabled" switch.
+            $svgoff = '%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'-4 -4 8 8\'%3e'
+                . '%3ccircle r=\'3\' fill=\'rgba(0,0,0,.25)\'/%3e%3c/svg%3e';
+            $svgon = '%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'-4 -4 8 8\'%3e'
+                . '%3ccircle r=\'3\' fill=\'%23fff\'/%3e%3c/svg%3e';
+            $css = '<style>'
+                . '#id_enabled.form-check-input{width:2.6em;height:1.35em;margin-top:.15em;'
+                . 'border-radius:2em;cursor:pointer;background-position:left center;'
+                . 'background-repeat:no-repeat;transition:background-position .15s ease-in-out;'
+                . 'background-image:url("data:image/svg+xml,' . $svgoff . '");}'
+                . '#id_enabled.form-check-input:checked{background-position:right center;'
+                . 'background-image:url("data:image/svg+xml,' . $svgon . '");}'
+                . '#id_enabled.form-check-input + label{cursor:pointer;font-weight:600;margin-left:.4em;}'
+                . '</style>';
+            $mform->addElement('html', $css);
         }
 
         // Environment selector. PayPhone uses ONE URL for both environments; what differs is the
@@ -121,8 +131,12 @@ background-image:url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/s
      * @param array $files
      * @param array $errors form errors (passed by reference)
      */
-    public static function validate_gateway_form(account_gateway $form,
-            \stdClass $data, array $files, array &$errors): void {
+    public static function validate_gateway_form(
+        account_gateway $form,
+        \stdClass $data,
+        array $files,
+        array &$errors
+    ): void {
         if (!empty($data->enabled)) {
             // Require the credential pair for the SELECTED environment.
             $live = ((isset($data->environment) ? $data->environment : 'test') === 'live');

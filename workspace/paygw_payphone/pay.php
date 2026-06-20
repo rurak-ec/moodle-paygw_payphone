@@ -93,8 +93,12 @@ try {
     // Mark the pending row as cancelled and send the user back with the error.
     $DB->set_field('paygw_payphone', 'status', 'canceled', ['id' => $recordid]);
     $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $recordid]);
-    redirect(new moodle_url('/'), get_string('error_prepare', 'paygw_payphone') . ' ' . $e->getMessage(),
-        0, \core\output\notification::NOTIFY_ERROR);
+    redirect(
+        new moodle_url('/'),
+        get_string('error_prepare', 'paygw_payphone') . ' ' . $e->getMessage(),
+        0,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 // Store PayPhone's payment id for traceability.
@@ -108,8 +112,12 @@ $host = strtolower((string) parse_url($paywith, PHP_URL_HOST));
 if ($scheme !== 'https' || !preg_match('/(^|\.)payphonetodoesposible\.com$/', $host)) {
     $DB->set_field('paygw_payphone', 'status', 'canceled', ['id' => $recordid]);
     $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $recordid]);
-    redirect(new moodle_url('/'), get_string('error_prepare', 'paygw_payphone'), 0,
-        \core\output\notification::NOTIFY_ERROR);
+    redirect(
+        new moodle_url('/'),
+        get_string('error_prepare', 'paygw_payphone'),
+        0,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 // Redirect the customer to PayPhone's hosted payment page (card flow).

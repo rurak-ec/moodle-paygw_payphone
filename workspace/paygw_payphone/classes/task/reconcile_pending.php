@@ -37,14 +37,18 @@ use paygw_payphone\payphone_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class reconcile_pending extends \core\task\scheduled_task {
-
     /** @var int Seconds: don't touch rows younger than this (give the live flow time to finish). */
     const MIN_AGE = 300;
 
     /** @var int Seconds: a pending row that never received a return is abandoned after this. */
     const ABANDON_AGE = 1800;
 
+    /** @var int Maximum rows processed per run, so a large backlog cannot overrun cron. */
+    const MAX_PER_RUN = 100;
+
     /**
+     * Get the human-readable task name shown in the scheduled-tasks admin page.
+     *
      * @return string
      */
     public function get_name(): string {
@@ -59,9 +63,15 @@ class reconcile_pending extends \core\task\scheduled_task {
 
         $now = time();
         // Candidates: still pending, or approved-but-not-delivered, and not touched recently.
-        $rows = $DB->get_records_select('paygw_payphone',
+        $rows = $DB->get_records_select(
+            'paygw_payphone',
             "status IN ('pending', 'approved') AND timemodified < :cutoff",
-            ['cutoff' => $now - self::MIN_AGE]);
+            ['cutoff' => $now - self::MIN_AGE],
+            'timemodified ASC',
+            '*',
+            0,
+            self::MAX_PER_RUN
+        );
 
         foreach ($rows as $row) {
             // Pending with no return ever received -> abandoned (PayPhone auto-reverses at ~5 min).

@@ -36,7 +36,6 @@ namespace paygw_payphone;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class payphone_helper {
-
     /** @var string Base URL of the PayPhone API. */
     const API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -101,8 +100,14 @@ class payphone_helper {
      * @return array Decoded response with at least: paymentId, payWithCard, payWithPayPhone.
      * @throws \moodle_exception On API/network/validation error.
      */
-    public function prepare(int $cents, string $currency, string $reference, string $clienttxid,
-            string $responseurl, string $cancelurl): array {
+    public function prepare(
+        int $cents,
+        string $currency,
+        string $reference,
+        string $clienttxid,
+        string $responseurl,
+        string $cancelurl
+    ): array {
         // Per PayPhone: amount == amountWithoutTax + amountWithTax + tax + service + tip.
         // We keep it simple (no separate tax breakdown). See plan notes re: IVA.
         $payload = [
@@ -123,8 +128,12 @@ class payphone_helper {
         $response = $this->request('/api/button/Prepare', $payload);
 
         if (empty($response['paymentId']) || empty($response['payWithCard'])) {
-            throw new \moodle_exception('error_prepare', 'paygw_payphone', '',
-                $this->extract_error($response));
+            throw new \moodle_exception(
+                'error_prepare',
+                'paygw_payphone',
+                '',
+                $this->extract_error($response)
+            );
         }
 
         return $response;
@@ -180,7 +189,11 @@ class payphone_helper {
             }
 
             $config = (object) \core_payment\helper::get_gateway_configuration(
-                $record->component, $record->paymentarea, $record->itemid, 'payphone');
+                $record->component,
+                $record->paymentarea,
+                $record->itemid,
+                'payphone'
+            );
             $client = self::for_config($config);
 
             try {
@@ -211,7 +224,10 @@ class payphone_helper {
             try {
                 $transaction = $DB->start_delegated_transaction();
                 $locked = $DB->get_record_sql(
-                    'SELECT * FROM {paygw_payphone} WHERE id = ? FOR UPDATE', [$record->id], MUST_EXIST);
+                    'SELECT * FROM {paygw_payphone} WHERE id = ? FOR UPDATE',
+                    [$record->id],
+                    MUST_EXIST
+                );
 
                 if ($locked->status === 'pending') {
                     $paymentid = \core_payment\helper::save_payment(
@@ -245,8 +261,12 @@ class payphone_helper {
         if ($record->status === 'approved') {
             try {
                 \core_payment\helper::deliver_order(
-                    $record->component, $record->paymentarea, $record->itemid,
-                    $record->paymentid, $record->userid);
+                    $record->component,
+                    $record->paymentarea,
+                    $record->itemid,
+                    $record->paymentid,
+                    $record->userid
+                );
             } catch (\Exception $e) {
                 // Money captured & saved but delivery failed: keep 'approved' so the
                 // reconciliation task retries delivery. Surface to the user as "contact support".
@@ -319,14 +339,22 @@ class payphone_helper {
 
             $decoded = json_decode($raw, true);
             if (!is_array($decoded)) {
-                throw new \moodle_exception('error_badresponse', 'paygw_payphone', '',
-                    'HTTP ' . $httpcode);
+                throw new \moodle_exception(
+                    'error_badresponse',
+                    'paygw_payphone',
+                    '',
+                    'HTTP ' . $httpcode
+                );
             }
 
             // PayPhone returns 4xx with an error body for business errors.
             if ($httpcode >= 400) {
-                throw new \moodle_exception('error_api', 'paygw_payphone', '',
-                    $this->extract_error($decoded));
+                throw new \moodle_exception(
+                    'error_api',
+                    'paygw_payphone',
+                    '',
+                    $this->extract_error($decoded)
+                );
             }
 
             return $decoded;

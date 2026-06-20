@@ -3,6 +3,23 @@
 Todas las versiones notables de `paygw_payphone` se documentan aquí.
 El formato sigue, de forma aproximada, [Keep a Changelog](https://keepachangelog.com/es/1.0.0/).
 
+## [1.2.1] — 2026-06-20 — Preparación para el directorio de moodle.org
+
+### Cambiado
+- `version.php`: declarado `$plugin->supported = [501, 502]` (Moodle 5.1–5.2).
+- La tarea de reconciliación ahora procesa como máximo 100 filas por ejecución (las más antiguas
+  primero), para que un backlog grande no sobrecargue el cron.
+- Estilo de código conforme a `phpcs --standard=moodle` (0/0); el CSS del interruptor de la pasarela
+  se construye por concatenación para respetar el límite de longitud de línea.
+
+### Añadido
+- CI con GitHub Actions (`moodle-plugin-ci`) en PHP 8.2–8.4 × Moodle 5.1/5.2 (PostgreSQL + MariaDB),
+  más un job `main` (5.3-dev) no bloqueante.
+- Tests PHPUnit para `payphone_helper` (resolución de credenciales, parsing de errores, idempotencia
+  de `finalise_transaction`) y para `gateway` (moneda y validación del formulario).
+- Pack de idioma **solo inglés**; el español se trasladó a `/translations` para AMOS.
+- `CONTRIBUTING.md` y `scripts/package_workspace.sh`.
+
 ## [1.2.0] — 2026-06-19 — Selector de ambiente funcional (patrón oficial)
 
 Investigación de la documentación oficial de PayPhone: usa **una sola URL** para prueba y

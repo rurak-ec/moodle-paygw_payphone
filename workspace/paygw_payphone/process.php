@@ -43,8 +43,12 @@ $record = $DB->get_record('paygw_payphone', ['clienttransactionid' => $clienttxi
 // SECURITY (IDOR/BOLA): only the user who started this payment may drive it. The legitimate
 // payer always returns in their own session; anyone else is rejected.
 if ((int) $record->userid !== (int) $USER->id) {
-    redirect(new moodle_url('/'), get_string('notyourpayment', 'paygw_payphone'), 0,
-        \core\output\notification::NOTIFY_ERROR);
+    redirect(
+        new moodle_url('/'),
+        get_string('notyourpayment', 'paygw_payphone'),
+        0,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 $component = $record->component;
@@ -54,12 +58,20 @@ $successurl = helper::get_success_url($component, $paymentarea, $itemid);
 
 // Already finished: do not re-process (idempotent).
 if ($record->status === 'completed') {
-    redirect($successurl, get_string('paymentalreadyprocessed', 'paygw_payphone'), 0,
-        \core\output\notification::NOTIFY_INFO);
+    redirect(
+        $successurl,
+        get_string('paymentalreadyprocessed', 'paygw_payphone'),
+        0,
+        \core\output\notification::NOTIFY_INFO
+    );
 }
 if ($record->status === 'canceled') {
-    redirect(new moodle_url('/'), get_string('paymentnotcleared', 'paygw_payphone'), 0,
-        \core\output\notification::NOTIFY_ERROR);
+    redirect(
+        new moodle_url('/'),
+        get_string('paymentnotcleared', 'paygw_payphone'),
+        0,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 // Persist the PayPhone transaction id BEFORE confirming, so the reconciliation task can finish
@@ -74,21 +86,37 @@ $result = payphone_helper::finalise_transaction($record);
 
 switch ($result) {
     case 'completed':
-        redirect($successurl, get_string('paymentsuccessful', 'paygw_payphone'), 0,
-            \core\output\notification::NOTIFY_SUCCESS);
+        redirect(
+            $successurl,
+            get_string('paymentsuccessful', 'paygw_payphone'),
+            0,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
         break;
     case 'rejected':
-        redirect(new moodle_url('/'), get_string('paymentnotcleared', 'paygw_payphone'), 0,
-            \core\output\notification::NOTIFY_ERROR);
+        redirect(
+            new moodle_url('/'),
+            get_string('paymentnotcleared', 'paygw_payphone'),
+            0,
+            \core\output\notification::NOTIFY_ERROR
+        );
         break;
     case 'delivery_failed':
         // Money captured but enrolment failed; the reconciliation task will retry delivery.
-        redirect(new moodle_url('/'), get_string('payment_received_pending', 'paygw_payphone'), 0,
-            \core\output\notification::NOTIFY_WARNING);
+        redirect(
+            new moodle_url('/'),
+            get_string('payment_received_pending', 'paygw_payphone'),
+            0,
+            \core\output\notification::NOTIFY_WARNING
+        );
         break;
     default:
-        // 'error' or 'pending': transient confirm failure — let the user retry the return.
-        redirect(new moodle_url('/'), get_string('error_confirm', 'paygw_payphone'), 0,
-            \core\output\notification::NOTIFY_ERROR);
+        // Transient confirm failure ('error' or 'pending') — let the user retry the return.
+        redirect(
+            new moodle_url('/'),
+            get_string('error_confirm', 'paygw_payphone'),
+            0,
+            \core\output\notification::NOTIFY_ERROR
+        );
         break;
 }

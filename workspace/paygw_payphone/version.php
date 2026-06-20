@@ -24,8 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026061804;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release   = '1.2.0';
-$plugin->requires  = 2025092600;        // Requires this Moodle version (5.1).
+$plugin->version   = 2026062000;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release   = '1.2.1';
+$plugin->requires  = 2025092600;        // Requires Moodle 5.1 (2025092600) or later.
+$plugin->supported = [501, 502];        // Supported from Moodle 5.1 to 5.2.
 $plugin->component = 'paygw_payphone';  // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_BETA;
