@@ -51,6 +51,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Moodle 4.5 LTS runs on PHP 8.1-8.3 (Bootstrap 4).
+          - php: '8.1'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: 'pgsql'
+          - php: '8.3'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: 'mariadb'
           - php: '8.2'
             moodle-branch: 'MOODLE_501_STABLE'
             database: 'pgsql'

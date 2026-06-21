@@ -33,7 +33,7 @@ moodle-plugin-ci phpunit
 
 ## Reporting issues
 Please use the GitHub issue tracker:
-<https://github.com/rurak-ec/moodle-payphone/issues>.
+<https://github.com/rurak-ec/moodle-paygw_payphone/issues>.
 Include your Moodle version, PHP version, the environment (test/live) and steps to reproduce — but
 **never** paste credentials or full transaction payloads.
 

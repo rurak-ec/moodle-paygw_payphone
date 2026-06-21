@@ -3,6 +3,16 @@
 Todas las versiones notables de `paygw_payphone` se documentan aquí.
 El formato sigue, de forma aproximada, [Keep a Changelog](https://keepachangelog.com/es/1.0.0/).
 
+## [1.2.2] — 2026-06-21 — Soporte para Moodle 4.5 LTS
+
+### Cambiado
+- **Soporte declarado para Moodle 4.5 LTS** (`$plugin->supported = [405, 502]`, `requires = 2024100700`).
+  Verificado contra `MOODLE_405_STABLE`: todos los métodos de `\core_payment\helper` usados
+  (`get_payable`, `get_rounded_cost`, `save_payment`, `deliver_order`, `get_gateway_configuration`,
+  `get_gateway_surcharge`, `get_success_url`), el formulario `account_gateway` y los módulos AMD
+  (`core/modal`, `core/templates`) existen en 4.5. El placeholder ya usaba `sr-only visually-hidden`
+  (compatible con Bootstrap 4 y 5). El CI ahora corre también `MOODLE_405_STABLE` en PHP 8.1 y 8.3.
+
 ## [1.2.1] — 2026-06-20 — Preparación para el directorio de moodle.org
 
 ### Cambiado

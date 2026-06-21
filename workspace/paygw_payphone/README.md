@@ -12,7 +12,7 @@ cualquier componente que cobre a través de él, como **"Inscripción de pago"**
 
 ## Requisitos
 
-- **Moodle 5.1** o superior (`$plugin->requires = 2025092600`).
+- **Moodle 4.5** o superior (`$plugin->requires = 2024100700`).
 - Una cuenta **PayPhone Business** (Ecuador) con acceso a la **consola de desarrollador**.
 - Moneda: **USD** (única que maneja PayPhone).
 - El sitio Moodle debe estar publicado por **HTTPS** (requerido por PayPhone en producción).
