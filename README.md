@@ -4,7 +4,7 @@ A Moodle **payment gateway** that lets a site charge with **PayPhone** (Ecuador)
 core payment subsystem (`\core_payment`), usable by Fee enrolment (`enrol_fee`) and any payment area.
 
 - **Component:** `paygw_payphone`
-- **Supported Moodle:** 4.5 – 5.2 (CI also tracks `main` / 5.3-dev)
+- **Supported Moodle:** 4.5 – 5.3 LTS (`$plugin->supported = [405, 503]`)
 - **Currency:** USD (Ecuador)
 - **License:** GNU GPL v3 or later
 - **Issues:** <https://github.com/rurak-ec/moodle-paygw_payphone/issues>

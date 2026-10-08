@@ -77,8 +77,11 @@ class reconcile_pending extends \core\task\scheduled_task {
             // Pending with no return ever received -> abandoned (PayPhone auto-reverses at ~5 min).
             if ($row->status === 'pending' && empty($row->transactionid)) {
                 if ($row->timecreated < $now - self::ABANDON_AGE) {
-                    $DB->set_field('paygw_payphone', 'status', 'canceled', ['id' => $row->id]);
-                    $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $row->id]);
+                    $DB->update_record('paygw_payphone', (object) [
+                        'id' => $row->id,
+                        'status' => 'canceled',
+                        'timemodified' => time(),
+                    ]);
                     mtrace("paygw_payphone: cancelled abandoned transaction {$row->clienttransactionid}");
                 }
                 continue;

@@ -44,5 +44,23 @@ function xmldb_paygw_payphone_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026061802, 'paygw', 'payphone');
     }
 
+    if ($oldversion < 2026100801) {
+        $table = new xmldb_table('paygw_payphone');
+
+        // Add index on status and timemodified for scheduled task reconciliation efficiency.
+        $index = new xmldb_index('status_timemodified', XMLDB_INDEX_NOTUNIQUE, ['status', 'timemodified']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Add index on userid for user return checks and privacy lookups.
+        $userindex = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        if (!$dbman->index_exists($table, $userindex)) {
+            $dbman->add_index($table, $userindex);
+        }
+
+        upgrade_plugin_savepoint(true, 2026100801, 'paygw', 'payphone');
+    }
+
     return true;
 }

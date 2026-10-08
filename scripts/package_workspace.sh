@@ -27,12 +27,30 @@ trap cleanup EXIT
 
 # Moodle expects the gateway folder name inside payment/gateway/ to be "payphone"
 # (the plugin name without the "paygw_" type prefix), not "paygw_payphone".
-cp -a "${SRC_DIR}" "${STAGE_DIR}/payphone"
-
-(
-  cd "${STAGE_DIR}"
-  zip -rq "${OUT_ZIP}" "payphone" -x '*.DS_Store' '*__MACOSX*' '*/.git/*'
-)
+if command -v zip >/dev/null 2>&1; then
+  cp -a "${SRC_DIR}" "${STAGE_DIR}/payphone"
+  (
+    cd "${STAGE_DIR}"
+    zip -rq "${OUT_ZIP}" "payphone" -x '*.DS_Store' '*__MACOSX*' '*/.git/*'
+  )
+elif command -v python3 >/dev/null 2>&1; then
+  python3 -c "
+import sys, os, zipfile
+src = sys.argv[1]
+out = sys.argv[2]
+with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
+    for root, dirs, files in os.walk(src):
+        for f in files:
+            if f in ('.DS_Store',) or '__MACOSX' in root or '/.git' in root:
+                continue
+            full = os.path.join(root, f)
+            rel = os.path.relpath(full, src)
+            z.write(full, os.path.join('payphone', rel))
+" "${SRC_DIR}" "${OUT_ZIP}"
+else
+  echo "ERROR: neither zip nor python3 is installed." >&2
+  exit 1
+fi
 
 echo "OK: package created"
 echo "  ${OUT_ZIP}"

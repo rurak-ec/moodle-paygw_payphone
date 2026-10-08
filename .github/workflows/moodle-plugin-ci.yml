@@ -66,7 +66,13 @@ jobs:
           - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'mariadb'
-          # Moodle 5.3 is not released yet (Oct 2026); track the dev branch as a non-blocking check.
+          - php: '8.3'
+            moodle-branch: 'MOODLE_503_STABLE'
+            database: 'pgsql'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_503_STABLE'
+            database: 'mariadb'
+          # Moodle main branch tracks ongoing development as a non-blocking check.
           - php: '8.4'
             moodle-branch: 'main'
             database: 'pgsql'

@@ -153,7 +153,7 @@ class payphone_helper {
             'clientTxId' => $clienttxid,
         ];
 
-        return $this->request('/api/button/V2/Confirm', $payload, 3);
+        return $this->request('/api/button/V2/Confirm', $payload, 2);
     }
 
     /**
@@ -209,8 +209,11 @@ class payphone_helper {
             $currencyok = isset($confirm['currency']) && $confirm['currency'] === $record->currency;
 
             if (!$statusok || !$amountok || !$currencyok) {
-                $DB->set_field('paygw_payphone', 'status', 'canceled', ['id' => $record->id]);
-                $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $record->id]);
+                $DB->update_record('paygw_payphone', (object) [
+                    'id' => $record->id,
+                    'status' => 'canceled',
+                    'timemodified' => time(),
+                ]);
                 debugging('paygw_payphone: confirmation rejected for ' . $record->clienttransactionid .
                     ' (statusok=' . (int) $statusok . ', amountok=' . (int) $amountok .
                     ', currencyok=' . (int) $currencyok . ')', DEBUG_DEVELOPER);
@@ -274,8 +277,11 @@ class payphone_helper {
                     ': ' . $e->getMessage(), DEBUG_NORMAL);
                 return 'delivery_failed';
             }
-            $DB->set_field('paygw_payphone', 'status', 'completed', ['id' => $record->id]);
-            $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $record->id]);
+            $DB->update_record('paygw_payphone', (object) [
+                'id' => $record->id,
+                'status' => 'completed',
+                'timemodified' => time(),
+            ]);
             return 'completed';
         }
 
@@ -309,9 +315,9 @@ class payphone_helper {
                 'Accept: application/json',
             ]);
             $options = [
-                // Interactive return path: keep the worker-hold bounded.
-                'CURLOPT_TIMEOUT' => 20,
-                'CURLOPT_CONNECTTIMEOUT' => 10,
+                // Interactive return path: keep worker hold minimal to avoid starvation.
+                'CURLOPT_TIMEOUT' => 10,
+                'CURLOPT_CONNECTTIMEOUT' => 5,
                 'CURLOPT_RETURNTRANSFER' => true,
                 // SECURITY: Moodle's \curl defaults CURLOPT_SSL_VERIFYPEER to 0 (off). For a
                 // payment channel whose Confirm response is the sole source of truth, we MUST

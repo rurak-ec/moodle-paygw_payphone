@@ -3,6 +3,21 @@
 Todas las versiones notables de `paygw_payphone` se documentan aquí.
 El formato sigue, de forma aproximada, [Keep a Changelog](https://keepachangelog.com/es/1.0.0/).
 
+## [1.2.4] — 2026-10-08 — Soporte para Moodle 5.3 LTS y optimización de rendimiento
+
+### Añadido
+- Soporte oficial para **Moodle 5.3 LTS** (`$plugin->supported = [405, 503]`).
+- Matriz de CI en `moodle-plugin-ci` ampliada con `MOODLE_503_STABLE` en PHP 8.3 (PostgreSQL) y PHP 8.4 (MariaDB).
+- Nuevos índices de base de datos en `{paygw_payphone}`: índice compuesto `status_timemodified` (`status, timemodified`) e índice en `userid`, optimizando la tarea programada `reconcile_pending` y consultas de usuario/privacidad.
+- Paso de actualización `2026100801` en `db/upgrade.php` para migración automática de índices.
+
+### Optimizado
+- **Rendimiento de red y prevención de bloqueo PHP-FPM**:
+  - Timeouts de cURL reducidos a 10s (timeout) y 5s (connect timeout), evitando worker starvation en peticiones interactivas.
+  - Reintentos en `confirm()` acotados a 2 intentos máximos (delegando la reconciliación a la tarea en segundo plano en caso de fallo de red).
+- **Consultas a base de datos**:
+  - Consolidación de múltiples operaciones `$DB->set_field` en llamadas únicas `$DB->update_record` para cancelaciones y confirmaciones.
+
 ## [1.2.2] — 2026-06-21 — Soporte para Moodle 4.5 LTS
 
 ### Cambiado

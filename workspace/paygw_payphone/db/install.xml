@@ -29,6 +29,8 @@
       <INDEXES>
         <INDEX NAME="clienttransactionid" UNIQUE="true" FIELDS="clienttransactionid"/>
         <INDEX NAME="paymentid" UNIQUE="false" FIELDS="paymentid"/>
+        <INDEX NAME="status_timemodified" UNIQUE="false" FIELDS="status, timemodified"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

@@ -91,8 +91,11 @@ try {
     $result = $payphone->prepare($cents, $currency, $reference, $clienttxid, $responseurl, $cancelurl);
 } catch (\moodle_exception $e) {
     // Mark the pending row as cancelled and send the user back with the error.
-    $DB->set_field('paygw_payphone', 'status', 'canceled', ['id' => $recordid]);
-    $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $recordid]);
+    $DB->update_record('paygw_payphone', (object) [
+        'id' => $recordid,
+        'status' => 'canceled',
+        'timemodified' => time(),
+    ]);
     redirect(
         new moodle_url('/'),
         get_string('error_prepare', 'paygw_payphone') . ' ' . $e->getMessage(),
@@ -110,8 +113,11 @@ $paywith = $result['payWithCard'];
 $scheme = strtolower((string) parse_url($paywith, PHP_URL_SCHEME));
 $host = strtolower((string) parse_url($paywith, PHP_URL_HOST));
 if ($scheme !== 'https' || !preg_match('/(^|\.)payphonetodoesposible\.com$/', $host)) {
-    $DB->set_field('paygw_payphone', 'status', 'canceled', ['id' => $recordid]);
-    $DB->set_field('paygw_payphone', 'timemodified', time(), ['id' => $recordid]);
+    $DB->update_record('paygw_payphone', (object) [
+        'id' => $recordid,
+        'status' => 'canceled',
+        'timemodified' => time(),
+    ]);
     redirect(
         new moodle_url('/'),
         get_string('error_prepare', 'paygw_payphone'),
